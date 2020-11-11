@@ -1,0 +1,47 @@
+{{define "settings"}}
+{{template "top" .}}
+<div id="main" data-handler="settings" class="main align-items-center justify-content-center flex-column">
+
+  <span class="settings-gear ico-settings"></span>
+
+  <div class="settings">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="darkMode"{{if .UserInfo.DarkMode}} checked{{end}}>
+      <label class="form-check-label" for="darkMode">
+        Dark Mode
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="showPokes"{{if .UserInfo.ShowPopups}} checked{{end}}>
+      <label class="form-check-label" for="showPokes">
+        Show pop-up notifications
+      </label>
+    </div>
+    <div{{if not .UserInfo.Authed}} class="d-hide"{{end}}>
+      <p>
+        The Decred DEX Client supports simultaneous use of any number of DEX
+        servers.
+      </p>
+      <button id="addADex" class="bg2 selected">Add a DEX</button>
+    </div>
+    <div>Build ID: <span id="commitHash" class="mono"></span></div>
+  </div>
+
+  {{- /* POP-UP FORMS */ -}}
+  <div id="forms" class="popupforms d-flex flex-center p-4 overflow-auto d-hide">
+    
+    {{- /* DEX ADDRESS */ -}}
+    <form class="card mx-auto my-5 bg1" id="dexAddrForm" autocomplete="off">
+      {{template "dexAddrForm"}}
+    </form>
+    
+    {{- /* CONFIRM REGISTRATION */ -}}
+    <form class="card bg1 d-hide" id="confirmRegForm">
+      {{template "confirmRegistrationForm"}}
+    </form>
+
+  </div>
+
+</div>
+{{template "bottom"}}
+{{end}}
