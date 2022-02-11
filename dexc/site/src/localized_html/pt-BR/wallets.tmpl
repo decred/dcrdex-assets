@@ -9,6 +9,7 @@
     <span data-state="syncing" 
       class="ico-sync fs12{{if or (not $w.Running) $w.Synced}} d-hide{{end}}"
       data-tooltip="wallet is {{printf "%.2f" (x100  $w.SyncProgress)}}% synced"></span>
+    <span data-state="nopeers" class="ico-disconnected fs17 d-hide" data-tooltip="no peers!"></span>
     <span data-state="status" class="txt-status">{{if $w.Open}}destrancado{{else if $w.Running}}trancado{{else}}desligado{{end}}</span>
   {{else}}
     <span data-state="sleeping" class="ico-sleeping fs17 grey d-hide"></span>
@@ -16,6 +17,7 @@
     <span data-state="unlocked" class="ico-unlocked d-hide"></span>
     <span data-state="nowallet" class="ico-cross fs12 red"></span>
     <span data-state="syncing" class="ico-sync fs12 d-hide"></span>
+    <span data-state="nopeers" class="ico-disconnected fs17 d-hide"></span>
     <span data-state="status" class="txt-status">sem carteira</span>
   {{end}}
 {{end}}
@@ -23,20 +25,22 @@
 {{define "actionButtons"}}
   {{$w := .Wallet}}
   {{if $w}}
-  {{$ready := and $w.Running $w.Open}}
-  <button data-action="connect"{{if $w.Running}} class="d-hide"{{end}}>Conectar</button>
-  <button data-action="unlock"{{if $w.Open}} class="d-hide"{{end}}>Destrancar</button>
-  <button data-action="withdraw"{{if not $ready}} class="d-hide"{{end}}>Retirar</button>
-  <button data-action="deposit"{{if not $ready}} class="d-hide"{{end}}>Depositar</button>
-  <button data-action="lock"{{if or (not $ready) (not $w.Encrypted)}} class="d-hide"{{end}}>Trancar</button>
-  <button data-action="create" class="d-hide">Criar uma Carteira {{.Info.Name}}</button>
+    {{$ready := and $w.Running $w.Open}}
+    <button data-action="connect"{{if $w.Running}} class="d-hide"{{end}}>Conectar</button>
+    <button data-action="unlock"{{if $w.Open}} class="d-hide"{{end}}>Destrancar</button>
+    <button data-action="withdraw"{{if not $ready}} class="d-hide"{{end}}>Retirar</button>
+    <button data-action="deposit"{{if not $ready}} class="d-hide"{{end}}>Depositar</button>
+    <button data-action="lock"{{if or (not $ready) (not $w.Encrypted)}} class="d-hide"{{end}}>Trancar</button>
+    <button data-action="rescan"{{if not $w.Traits.IsRescanner}} class="d-hide"{{end}}>Rescan</button>
+    <button data-action="create" class="d-hide">Criar uma Carteira {{.Info.Name}}</button>
     <span data-action="settings" class="ico-settings fs20 pointer"></span>
-    {{else}}
+  {{else}}
     <button data-action="connect" class="d-hide">Conectar</button>
     <button data-action="unlock" class="d-hide">Destrancar</button>
     <button data-action="withdraw" class="d-hide">Retirar</button>
     <button data-action="deposit" class="d-hide">Depositar</button>
     <button data-action="lock" class="d-hide">Trancar</button>
+    <button data-action="rescan" class="d-hide">Rescan</button>
     <button data-action="create">Criar uma Carteira {{.Info.Name}}</button>
     <span data-action="settings" class="ico-settings fs20 pointer d-hide"></span>
   {{end}}
@@ -203,9 +207,6 @@
       <div id="changeWalletType" class="py-1 d-hide">
         <select id="changeWalletTypeSelect"></select>
       </div>
-
-
-      <hr class="dashed my-2">
       <div class="my-2">
         Nota: Trocando para uma carteira diferente enquanto possui trocas ativas ou pedidos nos livros pode causar fundos a serem perdidos.
       </div>
@@ -220,10 +221,10 @@
         </div>
       </div>
       <div class="fs15 pt-3 text-center d-hide errcolor" id="reconfigErr"></div>
+      <hr class="dashed my-2">
+      <button id="downloadLogs" type="button" class="w-25 mt-1 justify-content-center fs15 bg2">Wallet Logs</button>
     </form>
-
   </div>
-
 </div>
 {{template "bottom"}}
 {{end}}
